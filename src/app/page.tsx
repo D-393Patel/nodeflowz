@@ -19,15 +19,15 @@ const Page =async ()=>{
   // const trpc=useTRPC();
   // const {data:users}=useQuery(trpc.getUsers.queryOptions());
   const queryClient=getQueryClient();
-  void queryClient.prefetchQuery(trpc.getUsers.queryOptions());
+  await queryClient.prefetchQuery(trpc.getUsers.queryOptions());
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center">
        <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={<p>loading.....</p>}>
+        <Suspense fallback={<p>loading....</p>}>
         <Client />
         </Suspense>
        </HydrationBoundary>
-      
+       
     </div>
   );
 };
