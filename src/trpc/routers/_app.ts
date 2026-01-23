@@ -1,6 +1,6 @@
 
 import { inngest } from '@/inngest/client';
-import {baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
+import {baseProcedure, createTRPCRouter, premiumProcedure, protectedProcedure } from '../init';
 import prisma from '@/lib/db';
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
@@ -14,7 +14,7 @@ export const appRouter = createTRPCRouter({
   //   },
   // });
 // }),
-  testAi:baseProcedure.mutation(async()=>{
+  testAi:premiumProcedure.mutation(async()=>{
   //   const { text } = await generateText({
   // model: google('gemini-2.5-flash'),
   // prompt: 'Write a vegetarian lasagna recipe for 4 people.',
