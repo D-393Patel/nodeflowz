@@ -1,9 +1,10 @@
 
 import { inngest } from '@/inngest/client';
-import {createTRPCRouter, protectedProcedure } from '../init';
+import {baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
 import prisma from '@/lib/db';
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
+import { TRPCError } from '@trpc/server';
 export const appRouter = createTRPCRouter({
   // getUsers: protectedProcedure.query(({ctx})=>{
   //   // console.log({userId:ctx.auth.user.id})
@@ -13,13 +14,14 @@ export const appRouter = createTRPCRouter({
   //   },
   // });
 // }),
-  testAi:protectedProcedure.mutation(async()=>{
+  testAi:baseProcedure.mutation(async()=>{
   //   const { text } = await generateText({
   // model: google('gemini-2.5-flash'),
   // prompt: 'Write a vegetarian lasagna recipe for 4 people.',
   // });
   // return text;
-
+  // throw new TRPCError({code:"BAD_REQUEST", message:"Something went wrong"})
+  // logger.info(...)
   await inngest.send({
     name:"execute/ai",
   })
