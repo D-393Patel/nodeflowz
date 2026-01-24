@@ -3,6 +3,7 @@ import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-q
 // import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useWorkflowsParams } from "./use-workflows-params";
+import { trpc } from "@/trpc/server";
 /**
  * Hook to fetch all workflows  using suspense
  */
@@ -38,3 +39,20 @@ export const useCreateWorkflow = () => {
     })
   );
 };
+
+
+export const useRemoveWorkflow=()=>{
+  const trpc=useTRPC();
+  const queryClient=useQueryClient();
+  return useMutation(
+    trpc.workflows.remove.mutationOptions({
+      onSuccess:(data) =>{
+        toast.success(`Workflow "${data.name}" removed`)
+        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.workflows.getOne.queryFilter({id:data.id}),
+        )
+      }
+    })
+  )
+}
