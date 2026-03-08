@@ -227,3 +227,7 @@ To avoid recurrence:
 ### **Interview-Ready Summary**
 
 > We faced a Prisma Client generation failure on Windows caused by OS-level file locking of the native query engine binary. The issue occurred when active Node.js processes prevented Prisma from overwriting its DLL file. We resolved this by terminating all Node processes, restarting the editor, and regenerating the Prisma client. This restored correct type generation and fixed broken module imports.
+
+
+
+Problem 2: key collision
