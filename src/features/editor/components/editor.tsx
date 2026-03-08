@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { 
     ReactFlow, 
     applyNodeChanges, 
@@ -25,6 +25,8 @@ import { nodeComponents } from '@/config/node-components';
 import { AddNodeButton } from './add-node-button';
 import { useSetAtom } from 'jotai';
 import { editorAtom } from '../store/atoms';
+import { NodeType } from '@/generated/prisma';
+import { ExecuteWorkflowButton } from './execute-workflow-button';
 
 // const initialNodes = [
 //   { id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Node 1' } },
@@ -57,8 +59,46 @@ export const Editor=({workflowId}:{workflowId:string})=>{
     (params:Connection) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     [],
   );
+
+
+  const hasManualTrigger=useMemo(()=>{
+    return nodes.some((node)=>node.type===NodeType.MANUAL_TRIGGER)},[nodes])
+    
     return (
-        <div className='w-full h-screen'>
+//         <div className='w-full h-screen'>
+//   <ReactFlowProvider>
+//     <ReactFlow 
+//       nodes={nodes}
+//       edges={edges}
+//       onNodesChange={onNodesChange}
+//       onEdgesChange={onEdgesChange}
+//       onConnect={onConnect}
+//       nodeTypes={nodeComponents}
+//       onInit={setEditor}
+//       fitView
+//       snapGrid={[10,10]}
+//       snapToGrid
+//       panOnScroll
+//       panOnDrag={false}
+//       selectionOnDrag
+//     >
+//       <Background/>
+//       <Controls position="top-left" />
+//       <MiniMap/>
+//       <Panel position='top-right'>
+//         <AddNodeButton />
+//       </Panel>
+//       {hasManualTrigger && (
+//       <Panel position='bottom-center'>
+//         <ExecuteWorkflowButton workflowId={workflowId}/>
+//       </Panel>
+//       )}
+//     </ReactFlow>
+//   </ReactFlowProvider>
+// </div>
+
+
+<div className='w-full h-screen relative'>
   <ReactFlowProvider>
     <ReactFlow 
       nodes={nodes}
@@ -74,13 +114,26 @@ export const Editor=({workflowId}:{workflowId:string})=>{
       panOnScroll
       panOnDrag={false}
       selectionOnDrag
+      style={{ height: '100%', width: '100%' }} // Ensure ReactFlow fills parent
     >
-      <Background/>
+      <Background />
       <Controls position="top-left" />
-      <MiniMap/>
-      <Panel position='top-right'>
+      <MiniMap />
+      
+      {/* Top-right save button panel */}
+      <Panel position='top-right' style={{ zIndex: 10 }}>
         <AddNodeButton />
       </Panel>
+      
+      {/* Bottom-center execute workflow button */}
+      {hasManualTrigger && (
+        <Panel 
+          position='bottom-center' 
+          style={{ zIndex: 10, marginBottom: '60px' }}
+        >
+          <ExecuteWorkflowButton workflowId={workflowId} />
+        </Panel>
+      )}
     </ReactFlow>
   </ReactFlowProvider>
 </div>
