@@ -1,14 +1,23 @@
 import type { NodeExecutor } from "@/features/executions/types";
 import { NonRetriableError } from "inngest";
 import ky,{type Options as KyOptions} from "ky";
+import Handlebars from "handlebars";
+import { Handle } from "vaul";
+
+
+Handlebars.registerHelper("json",(context)=>{
+const stringifed=JSON.stringify(context,null,2);
+const safestring= new Handlebars.SafeString(stringifed);
+return  safestring;
+});
 
 type HttpRequestData={
-variableName?:string;
-endpoint?:string,
- method?:"GET"|"POST"|"PUT"|"PATCH"|"DELETE"
-body?:string,
+variableName:string;
+endpoint:string;
+method:"GET"|"POST"|"PUT"|"PATCH"|"DELETE";
+body?:string;
 }
-export const httpRequestDataExecutor:NodeExecutor<HttpRequestData>=async({
+export const httpRequestExecutor:NodeExecutor<HttpRequestData>=async({
 data,
 nodeId,
 context,
@@ -21,16 +30,25 @@ throw new NonRetriableError("HTTP Request node: No endpoint configured")
 }
 if(!data.variableName){
 //publish "error" state for http request
-throw new NonRetriableError("VariableName not configured")
+throw new NonRetriableError("HTTP Request node:VariableName not configured")
+}
+if(!data.method){
+//publish "error" state for http request
+throw new NonRetriableError("HTTP Request node:Method not configured")
 }
 const result=await step.run("http-request",async()=>{
-    const endpoint=data.endpoint!;
-    const method=data.method ||"GET";
+    //http://..../{{todo.httpResponse.data.userId}} context is previous node data
+    const endpoint=Handlebars.compile(data.endpoint)(context);
+    // console.log("ENDPOINT",{endpoint})
+    const method=data.method;
     
     const options:KyOptions={method};
     if(["POST","PUT","PATCH"].includes(method))
     {
-    options.body=data.body;
+    const resolved=Handlebars.compile(data.body ||"{}")(context);
+    console.log("BODY: ",resolved)
+    JSON.parse(resolved);
+    options.body=resolved;
     options.headers={
         "Content-Type":"application/json",
     };
@@ -47,18 +65,12 @@ const result=await step.run("http-request",async()=>{
             data:responseData
         } 
     }
-    if(data.variableName){
     return {
         ...context,
         [data.variableName]:responsePayload,
-    }
     
-}
-//fallback to direct httpResponse for backwards Compatibility
-    return{
-        ...context,
-        ...responsePayload,
     }
+
 })
 // const result=await step.run("http-request",async ()=>context);
 

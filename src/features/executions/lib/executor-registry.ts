@@ -1,12 +1,12 @@
 import { NodeType } from "@/generated/prisma";
 import { NodeExecutor } from "../types";
 import { manualTriggerExecutor } from "@/features/triggers/components/manual_trigger.tsx/executor";
-import { httpRequestDataExecutor } from "../components/http-request/executor";
+import { httpRequestExecutor } from "../components/http-request/executor";
 
-export const executorRegistry:Record<NodeType,NodeExecutor>={
+export const executorRegistry:Record<NodeType,NodeExecutor<any>>={
     [NodeType.MANUAL_TRIGGER]:manualTriggerExecutor,
     [NodeType.INITIAL]:manualTriggerExecutor,
-    [NodeType.HTTP_REQUEST]:httpRequestDataExecutor
+    [NodeType.HTTP_REQUEST]:httpRequestExecutor,//fault of any fix it
 }
 
 export const getExecutor=(type:NodeType):NodeExecutor=>{
