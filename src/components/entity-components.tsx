@@ -203,8 +203,8 @@ export const ErrorView = ({
   message,
 }: StateViewProps) => {
   return (
-    <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4">
-      <AlertTriangleIcon className="size-6 text-primary" />
+    <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4 animate-pulse bg-destructive/5 rounded-lg">
+      <AlertTriangleIcon className="size-6 text-destructive" />
       {Boolean(message) && (
       <p className="text-sm text-muted-foreground">
         {message}
