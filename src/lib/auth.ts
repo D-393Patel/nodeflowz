@@ -11,6 +11,16 @@ emailAndPassword:{
     enabled:true,
     autoSignIn:true, //this would automatically sign in when someone registers
 },
+socialProviders:{
+    github:{
+     clientId:process.env.GITHUB_CLIENT_ID as string,
+     clientSecret:process.env.GITHUB_CLIENT_SECRET as string,
+    },
+    google:{
+     clientId:process.env.GOOGLE_CLIENT_ID as string,
+     clientSecret:process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+},
 plugins:[
     polar({
         client:polarClient,
