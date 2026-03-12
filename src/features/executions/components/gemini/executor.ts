@@ -25,7 +25,7 @@ type GeminiData = {
 export const geminiExecutor: NodeExecutor<GeminiData> = async ({
   data,
   nodeId,
-  // userId,
+  userId,
   context,
   step,
   publish,
@@ -76,7 +76,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     return prisma.credential.findUnique({
       where: {
         id: data.credentialId,
-        // userId,
+        userId,
       },
     });
   });
@@ -97,21 +97,32 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
 
   try {
     const { steps } = await step.ai.wrap(
-      "gemini-generate-text",
-      generateText,
-      {
-        model: google("gemini-2.0-flash"),
-        system: systemPrompt,
-        prompt: userPrompt,
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
+    "gemini-generate-text",
+    generateText,
+    {
+      // Use a stable, high-performance primary model
+      model: google("gemini-2.5-flash"), 
+      system: systemPrompt,
+      prompt: userPrompt,
+      
+      // AI Gateway handles failover automatically if the primary fails
+      providerOptions: {
+        gateway: {
+          models: [
+            "google/gemini-3-flash-preview",   // Fallback 1: Newer, higher capability
+            "google/gemini-3.1-flash-lite-preview" // Fallback 2: High efficiency
+          ],
         },
       },
-    );
-
-    const text = 
+      
+      experimental_telemetry: {
+        isEnabled: true,
+        recordInputs: true,
+        recordOutputs: true,
+      },
+    },
+  );
+  const text = 
       steps[0].content[0].type === "text" 
         ? steps[0].content[0].text
         : "";
