@@ -17,9 +17,12 @@ export function useNodeStatus({
     refreshToken
 }:UseNodeStatusOptions){
     const [status,setStatus]=useState<NodeStatus>("initial");
+    const realtimeEnabled =
+        process.env.NODE_ENV === "production" ||
+        process.env.NEXT_PUBLIC_ENABLE_REALTIME_NODE_STATUS === "true";
     const {data}=useInngestSubscription({
         refreshToken,
-        enabled:true,
+        enabled:realtimeEnabled,
     })
     useEffect(()=>{
         if(!data?.length)
