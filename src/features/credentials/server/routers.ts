@@ -1,13 +1,16 @@
 import prisma from "@/lib/db";
-import { createTRPCRouter, premiumProcedure, protectedProcedure } from "@/trpc/init";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { TRPCError } from "@trpc/server";
 import z from "zod";
 import { PAGINATION } from "@/config/constants";
 import { CredentialType } from "@/generated/prisma";
 import { encrypt } from "@/lib/encryption";
 // import { encrypt } from "@/lib/encryption";
 
+const FREE_CREDENTIAL_LIMIT = 5;
+
 export const credentialsRouter = createTRPCRouter({
-  create: premiumProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1, "Name is required"),
@@ -15,8 +18,20 @@ export const credentialsRouter = createTRPCRouter({
         value: z.string().min(1, "Value is required")
       })
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { name, value, type } = input;
+      const credentialCount = await prisma.credential.count({
+        where: {
+          userId: ctx.auth.user.id,
+        },
+      });
+
+      if (credentialCount >= FREE_CREDENTIAL_LIMIT) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Free plan supports up to 5 credentials. Upgrade to Pro to create more.",
+        });
+      }
 
       return prisma.credential.create({
         data: {

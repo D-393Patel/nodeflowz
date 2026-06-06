@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -62,6 +63,16 @@ const credentialTypeOptions = [
     label: "Gemini",
     logo: "/logos/gemini.svg",
   },
+  {
+    value: CredentialType.TINYFISH,
+    label: "TinyFish",
+    logo: "/logos/tinyfish.svg",
+  },
+  {
+    value: CredentialType.GOOGLE_SHEETS,
+    label: "Google Sheets",
+    logo: "/logos/google-sheets.svg",
+  },
 ];
 
 interface CredentialFormProps {
@@ -91,6 +102,9 @@ export const CredentialForm = ({
       value: "",
     },
   });
+
+  const selectedType = form.watch("type");
+  const isGoogleSheetsCredential = selectedType === CredentialType.GOOGLE_SHEETS;
 
   const onSubmit = async (values: FormValues) => {
     if (isEdit && initialData?.id) {
@@ -184,14 +198,29 @@ export const CredentialForm = ({
                   name="value"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>API Key</FormLabel>
+                      <FormLabel>
+                        {isGoogleSheetsCredential ? "Service Account JSON" : "API Key"}
+                      </FormLabel>
                       <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="sk-..."
-                          {...field}
-                        />
+                        {isGoogleSheetsCredential ? (
+                          <Textarea
+                            placeholder='{"client_email":"...","private_key":"-----BEGIN PRIVATE KEY-----\\n..."}'
+                            className="min-h-[180px] font-mono text-sm"
+                            {...field}
+                          />
+                        ) : (
+                          <Input 
+                            type="password" 
+                            placeholder="sk-..."
+                            {...field}
+                          />
+                        )}
                       </FormControl>
+                      {isGoogleSheetsCredential ? (
+                        <p className="text-sm text-muted-foreground">
+                          Paste the full Google service account JSON and share the target spreadsheet with that service account email.
+                        </p>
+                      ) : null}
                       <FormMessage />
                     </FormItem>
                   )}

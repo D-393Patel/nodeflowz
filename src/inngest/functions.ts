@@ -13,6 +13,8 @@ import { openAiChannel } from "./channels/openai";
 import { anthropicChannel } from "./channels/anthropic";
 import { discordChannel } from "./channels/discord";
 import { slackChannel } from "./channels/slack";
+import { tinyFishChannel } from "./channels/tinyfish";
+import { googleSheetsChannel } from "./channels/google-sheets";
 
 export const executeWorkflow = inngest.createFunction(
   { 
@@ -33,12 +35,14 @@ export const executeWorkflow = inngest.createFunction(
     event: "workflows/execute.workflow",
     channels: [
       httpRequestChannel(),
+      googleSheetsChannel(),
       manualTriggerChannel(),
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
       geminiChannel(),
       openAiChannel(),
       anthropicChannel(),
+      tinyFishChannel(),
       discordChannel(),
       slackChannel(),
     ],

@@ -97,6 +97,8 @@ enum CredentialType{
   OPENAI
   ANTHROPIC
   GEMINI
+  TINYFISH
+  GOOGLE_SHEETS
 }
 
 model Workflow{
@@ -121,6 +123,8 @@ enum NodeType{
   ANTHROPIC
   GEMINI
   OPENAI
+  TINYFISH
+  GOOGLE_SHEETS
   DISCORD
   SLACK
 }

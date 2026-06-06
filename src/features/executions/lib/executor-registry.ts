@@ -9,16 +9,20 @@ import { anthropicExecutor } from "../components/anthropic/executor";
 import { openAiExecutor } from "../components/openai/executor";
 import { discordExecutor } from "../components/discord/executor";
 import { slackExecutor } from "../components/slack/executor";
+import { tinyFishExecutor } from "../components/tinyfish/executor";
+import { googleSheetsExecutor } from "../components/google-sheets/executor";
 
 export const executorRegistry:Record<NodeType,NodeExecutor>={
     [NodeType.MANUAL_TRIGGER]:manualTriggerExecutor,
     [NodeType.INITIAL]:manualTriggerExecutor,
     [NodeType.HTTP_REQUEST]:httpRequestExecutor,//fault of any fix it
+    [NodeType.GOOGLE_SHEETS]:googleSheetsExecutor,
     [NodeType.GOOGLE_FORM_TRIGGER]:googleFormTriggerExecutor,
     [NodeType.STRIPE_TRIGGER]:stripeTriggerExecutor,
     [NodeType.GEMINI]:geminiExecutor,
     [NodeType.ANTHROPIC]:anthropicExecutor,
     [NodeType.OPENAI]:openAiExecutor,
+    [NodeType.TINYFISH]:tinyFishExecutor,
     [NodeType.DISCORD]:discordExecutor,
     [NodeType.SLACK]:slackExecutor,
 }

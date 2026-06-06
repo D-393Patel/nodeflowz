@@ -51,14 +51,20 @@ const triggerNodes:NodeTypeOption[]=[
 ]
 
 const executionNodes:NodeTypeOption[]=[
-    {
-        type:NodeType.HTTP_REQUEST,
-        label:"HTTP Request",
-        description:"Makes an HTTP Request",
-        icon:GlobeIcon
-    },
-    {
-        type:NodeType.GEMINI,
+  {
+    type:NodeType.HTTP_REQUEST,
+    label:"HTTP Request",
+    description:"Makes an HTTP Request",
+    icon:GlobeIcon
+  },
+  {
+    type: NodeType.GOOGLE_SHEETS,
+    label: "Google Sheets",
+    description: "Append rows to a Google Sheet",
+    icon: "/logos/google-sheets.svg",
+  },
+  {
+    type:NodeType.GEMINI,
         label:"Google gemini",
         description:"Use Google Gemini to generate text",
         icon:"/logos/gemini.svg"
@@ -74,6 +80,12 @@ const executionNodes:NodeTypeOption[]=[
     label: "Anthropic",
     description: "Uses Anthropic to generate text",
     icon: "/logos/anthropic.svg",
+  },
+  {
+    type: NodeType.TINYFISH,
+    label: "TinyFish Web Agent",
+    description: "Use TinyFish to browse pages and extract structured data",
+    icon: "/logos/tinyfish.svg",
   },
   {
     type: NodeType.DISCORD,
